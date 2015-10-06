@@ -13,7 +13,11 @@ $to = "alexey.s.kolonitsky@gmail.com";
 $subject = "Froggy Order #" . $orderId;
 $message = $_GET["data"];
 
-writeUTF8File("orders/order" . $orderId, $message);
+// Update order number in message
+$message = str_replace("{orderId}", $orderId, $message);
+
+// Save file to disk
+writeUTF8File("orders/order" . $orderId . ".html", $message);
 
 // Send information about order to manager 
 // Always set content-type when sending HTML email
@@ -23,7 +27,7 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 // More headers
 $headers .= 'From: ' . $from . "\r\n";
 $headers .= 'Cc: ' . $cc . "\r\n";
-mail($from, $subject, $message, $headers);
+mail($to, $subject, $message, $headers);
 
 // Send cover letter to customer
 echo "<orderId>" . $orderId . "</orderId>";
@@ -35,5 +39,5 @@ function writeUTF8File($filename,$content) {
         fwrite($f, pack("CCC",0xef,0xbb,0xbf)); 
         fwrite($f,$content); 
         fclose($f); 
-} 
+}
 ?>
